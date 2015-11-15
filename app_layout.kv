@@ -1,0 +1,77 @@
+#: import Polygon objects.polygon.Polygon
+#: import MyLine objects.line.Line
+#: import MyEllipse objects.ellipse.Ellipse
+#: import Circle objects.circle.Circle
+
+MyPaintWidget:
+    id: 'painting_area'
+    orientation: 'horizontal'
+    object_settings_box:object_settings
+    additional_settings_box:additional_settings
+
+    BoxLayout:
+        id: buttons_layout
+        orientation: 'vertical'
+        size_hint: (.2, 1)
+
+        BoxLayout:
+            id: object_settings
+            orientation: 'vertical'
+            size_hint: (1, .5)
+            Label:
+                text: 'Thickness of object:'
+                size_hint_y: .1
+            TextInput:
+                id: thickness_textbox
+                multiline: 'false'
+                size_hint_y: .2
+                on_text: root.on_update_settings(thickness_textbox, typ='thickness')
+            Label:
+                text: 'Color (R, G, B, A)'
+                size_hint_y: .1
+            TextInput:
+                id: color_textbox
+                multiline: 'false'
+                size_hint_y: .2
+                on_text: root.on_update_settings(color_textbox, typ='color')
+            Label:
+                text: 'Anty Aliasing'
+                size_hint_y: .1
+            CheckBox:
+                id: anty_aliasing_checkbox
+                size_hint_y: .2
+                on_press: root.on_update_settings(anty_aliasing_checkbox)
+            BoxLayout:
+                id: additional_settings
+                orientation: 'vertical'
+
+        BoxLayout:
+            id: new_objects
+            orientation: 'vertical'
+            size_hint: (1, .5)
+            Label:
+                text: 'Available actions'
+                size_hint_y: .2
+            Button:
+                id: 'line'
+                text: 'Line'
+                on_press: root.on_press_button(MyLine)
+            Button:
+                id: 'ellipse'
+                text: 'Ellipse'
+                on_press: root.on_press_button(MyEllipse)
+            Button:
+                id: 'circle'
+                text: 'Circle'
+                on_press: root.on_press_button(Circle)
+            Button:
+                id: 'polygon'
+                text: 'Polygon'
+                on_press: root.on_press_button(Polygon)
+            Button:
+                id: 'remove'
+                text: 'Remove'
+                on_press: root.remove_active_obj()
+
+    BoxLayout:
+        size_hint: (.8, 1)
