@@ -33,9 +33,8 @@ class MyPaintWidget(BoxLayout):
 
     def on_touch_down(self, touch):
         x, y = int(touch.x), int(touch.y)
-        for point in self.point_set:
-            point.on_touch_down(x, y)
-        if not self.selected_point and x > self.children[0].x:
+        is_touched = any(point.on_touch_down(x, y) for point in self.point_set)
+        if not is_touched and x > self.children[0].x:
             obj = self.selected_method(x, y, self)
             if obj:
                 self.object_set.add(obj)

@@ -1,5 +1,7 @@
 from kivy.graphics import Color
 
+from objects.line import Line
+
 
 # interface for SettingsWidgetClass
 class BasicSettingWidgetClass(object):
@@ -7,6 +9,7 @@ class BasicSettingWidgetClass(object):
     obj = None
 
     def remove_settings(self, widget):
+        widget.on_press_button(Line)
         object_settings_box = widget.additional_settings_box
         object_settings_box.clear_widgets()
 

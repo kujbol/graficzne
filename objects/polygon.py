@@ -13,6 +13,8 @@ class Polygon(BasicPointClass):
             Point(x + 30, y - 30, self),
         ]
 
+        self.widget.selected_point = self.points[0]
+
         self.draw()
 
     def draw(self):
@@ -36,3 +38,24 @@ class Polygon(BasicPointClass):
                 x1, y1, x2, y2, self.settings.color, obj=self,
                 thickness=self.settings.thickness
             )
+
+    def add_point(self, x, y, widget):
+        point = Point(x, y, self)
+        self.points.append(point)
+        widget.selected_point = point
+        self.draw()
+
+    def move_active_point(self, widget):
+        try:
+            index = self.points.index(widget.selected_point)
+        except ValueError:
+            pass
+        else:
+            self.points[index], self.points[index-1] = (
+                self.points[index-1], self.points[index]
+            )
+            self.draw()
+
+    def fill_or_un_fill(self, widget):
+        for point in self.points:
+            print point.x, point.y

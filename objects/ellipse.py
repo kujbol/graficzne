@@ -10,6 +10,8 @@ class Ellipse(BasicPointClass):
         self.settings = Settings()
         self.points = [Point(x, y, self), Point(x+50, y+30, self)]
 
+        self.widget.selected_point = self.points[0]
+
         self.draw()
 
     def draw(self):

@@ -31,11 +31,15 @@ class Point(object):
         if self.is_touched(x, y):
             self.obj.widget.select_obj(self.obj)
             self.obj.widget.selected_point = self
+            return True
+        return False
 
     def on_touch_move(self, x, y):
         if self.obj.widget.selected_point is self:
             self.update_position(x, y)
 
     def on_touch_up(self, x, y):
-        if self.obj.widget.selected_point is self:
-            self.obj.widget.selected_point = None
+        pass
+        # if self.obj.widget.selected_point is self:
+        #     self.obj.widget.selected_point = None
+

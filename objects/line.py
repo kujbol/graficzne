@@ -10,6 +10,8 @@ class Line(BasicPointClass):
         self.settings = Settings()
         self.points = [Point(x, y, self), Point(x+30, y, self)]
 
+        self.widget.selected_point = self.points[0]
+
         self.draw()
 
     def draw(self):
