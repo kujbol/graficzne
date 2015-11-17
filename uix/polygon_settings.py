@@ -29,7 +29,7 @@ class PolygonSettingsWidget(BasicSettingWidgetClass):
 
         fill_polygon = Button(text='Fill polygon')
         fill_polygon.bind(
-            on_press=lambda a: widget.selected_obj.fill_or_un_fill(widget)
+            on_press=lambda a: widget.selected_obj.change_fill(widget)
         )
 
         # remove_point_btn = Button(text='Remove active point from poly')

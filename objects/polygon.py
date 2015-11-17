@@ -1,4 +1,5 @@
 from draw.line import draw_line, draw_line_anty_aliasing
+from draw.polygon import clean_polygon_inside, re_draw_polygon_inside
 
 from objects.basics import Settings, BasicPointClass
 from objects.point import Point
@@ -7,6 +8,7 @@ from objects.point import Point
 class Polygon(BasicPointClass):
     def __init__(self, x, y, widget):
         self.widget = widget
+        self.token_inside = None
         self.settings = Settings()
         self.points = [
             Point(x, y, self), Point(x + 30, y + 30, self),
@@ -19,6 +21,8 @@ class Polygon(BasicPointClass):
 
     def draw(self):
         self.widget.canvas.remove_group(str(hash(self)))
+        clean_polygon_inside(self)
+
         p2 = self.points[-1]
         for point in self.points:
             p1 = p2
@@ -40,12 +44,14 @@ class Polygon(BasicPointClass):
             )
 
     def add_point(self, x, y, widget):
+        clean_polygon_inside(self)
         point = Point(x, y, self)
         self.points.append(point)
         widget.selected_point = point
         self.draw()
 
     def move_active_point(self, widget):
+        clean_polygon_inside(self)
         try:
             index = self.points.index(widget.selected_point)
         except ValueError:
@@ -56,6 +62,8 @@ class Polygon(BasicPointClass):
             )
             self.draw()
 
-    def fill_or_un_fill(self, widget):
-        for point in self.points:
-            print point.x, point.y
+    def change_fill(self, widget):
+        if self.token_inside:
+            clean_polygon_inside(self)
+        else:
+            re_draw_polygon_inside(self)
