@@ -93,6 +93,10 @@ class MyPaintWidget(BoxLayout):
             self.selected_obj.delete()
             self.selected_obj = None
 
+        self.additional_settings_box.clear_widgets()
+
+
+
 
 class MyPaintApp(App):
 

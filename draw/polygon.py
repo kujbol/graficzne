@@ -1,5 +1,5 @@
 from kivy.graphics.context_instructions import Color
-from calculations.basics import SimplePoint, Segment
+from calculations.basics import SimplePoint, Segment, is_between
 from draw.line import draw_line
 
 
@@ -36,3 +36,19 @@ def clean_polygon_inside(polygon):
     if polygon.token_inside:
         polygon.widget.canvas.remove_group(str(hash(polygon.token_inside)))
     polygon.token_inside = None
+
+
+def create_list(intersection_points, segments):
+    polygon = []
+    for segment in segments:
+        polygon_intersection_points = []
+        for intersection_point in intersection_points:
+            if is_between(segment.p1, segment.p2, intersection_point) == 0:
+                polygon_intersection_points.append(intersection_point)
+        polygon_intersection_points.sort(
+            key=lambda p: segment.p1.distance(p), reverse=True
+        )
+        polygon.append(segment.p1)
+        if len(polygon_intersection_points) > 0:
+            polygon.extend(polygon_intersection_points)
+    return polygon

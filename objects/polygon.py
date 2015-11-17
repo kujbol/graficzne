@@ -1,25 +1,12 @@
 from itertools import chain
 from calculations.basics import Segment
 from draw.line import draw_line, draw_line_anty_aliasing
-from draw.polygon import clean_polygon_inside, re_draw_polygon_inside
+from draw.polygon import (
+    clean_polygon_inside, re_draw_polygon_inside, create_list
+)
 
 from objects.basics import Settings, BasicPointClass
 from objects.point import Point
-
-
-def add_inter_points(graph, intersection_points, segments):
-    for segment in segments:
-        polygon_intersection_points = []
-        for intersection_point in intersection_points:
-            if segment.direction(intersection_point) == 0:
-                polygon_intersection_points.append(intersection_point)
-        polygon_intersection_points.sort(
-            key=lambda p: segment.p1.distance(p), reverse=True
-        )
-        previous = segment.p1
-        for point in polygon_intersection_points:
-            graph[previous].apend(point)
-        graph[point] = segment.p2
 
 
 class Polygon(BasicPointClass):
@@ -85,12 +72,31 @@ class Polygon(BasicPointClass):
         else:
             re_draw_polygon_inside(self)
 
-    def find_intersection_with_polygon(self, polygon):
-        polygon_segments = [
+    def count_intersection_with_all(self, widget):
+        for obj in widget.object_set:
+            if isinstance(obj, Polygon):
+                self.find_intersection_with_polygon(obj)
+
+    def delete_active_point(self, widget):
+        if len(self.points) == 1:
+            return
+        try:
+            i = self.points.index(widget.selected_point)
+        except ValueError:
+            pass
+        else:
+            self.points.pop(i)
+            widget.selected_point.delete()
+            widget.selected_point = None
+            self.draw()
+
+    def find_intersection_with_polygon(self, subject):
+        # self is window
+        subject_segments = [
             Segment(p1, p2)
-            for p1, p2 in zip(polygon.points[:-1], polygon.points[1:])
+            for p1, p2 in zip(subject.points[:-1], subject.points[1:])
         ]
-        polygon_segments.append(Segment(polygon.points[-1], polygon.points[0]))
+        subject_segments.append(Segment(subject.points[-1], subject.points[0]))
 
         self_segments = [
             Segment(p1, p2)
@@ -98,25 +104,61 @@ class Polygon(BasicPointClass):
         ]
         self_segments.append(Segment(self.points[-1], self.points[0]))
 
-        intersection_points = [
-            Segment.intersection(self_segment, segment)
-            for segment in polygon_segments
-            for self_segment in self_segments
-            if Segment.is_intersection(self_segment, segment)
-        ]
+        intersection_points = []
+        for self_segment in self_segments:
+            for subject_segment in subject_segments:
+                if (
+                    Segment.is_intersection(self_segment, subject_segment) and
+                    Segment.intersection(self_segment, subject_segment)
+                    is not None
+                ):
+                    intersection_points.append(
+                        Segment.intersection(subject_segment, self_segment)
+                    )
 
-        graph = {
-            segment.p1: []
-            for segment in chain(polygon_segments, self_segments)
-        }
+        subject_points = create_list(intersection_points, subject_segments)
+        self_points = create_list(intersection_points, self_segments)
+        into_self_windows = []  # list of input into window
 
-        for point in intersection_points:
-            graph[point] = []
-
-        add_inter_points(graph, intersection_points, polygon_segments)
-        add_inter_points(graph, intersection_points, self_segments)
+        i = 0
+        for point in self_points:
+            if point in intersection_points and i == 0:
+                into_self_windows.append(point)
+                i = (i + 1) % 2
 
         visited = {
-            obj: False for obj in graph.iterkeys()
+            point: False
+            for point in chain(subject_points, self_points)
         }
 
+        start_point = into_self_windows[0]
+        actual_index = subject_points.index(start_point)
+        actual_index += 1
+        actual_point = subject_points[actual_index]
+        output_point_list = [start_point]
+
+        actual_poly = subject_points
+
+        def not_actual_poly(actual_poly):
+            if actual_poly == subject_points:
+                return self_points
+            else:
+                return subject_points
+
+        for point1, point2 in zip(subject_points, subject_points[1:]):
+            self._draw_line(point1, point2)
+        self._draw_line(subject_points[-1], subject_points[0])
+
+        while actual_point != start_point:
+            if visited[actual_point]:
+                break
+            visited[actual_point] = True
+            output_point_list.append(actual_point)
+            if actual_point in not_actual_poly(actual_poly):
+                actual_poly = not_actual_poly(actual_poly)
+                actual_index = actual_poly.index(actual_point)
+                actual_index = (actual_index + 1) % len(actual_poly)
+                actual_point = actual_poly[actual_index]
+            else:
+                actual_index = (actual_index + 1) % len(actual_poly)
+                actual_point = actual_poly[actual_index]

@@ -32,9 +32,21 @@ class PolygonSettingsWidget(BasicSettingWidgetClass):
             on_press=lambda a: widget.selected_obj.change_fill(widget)
         )
 
-        # remove_point_btn = Button(text='Remove active point from poly')
-        # self.remove_point_btn.bind(on_press=widget.on_press_button('RemovePoint'))
+        find_intersection = Button(text='Find intersection')
+        find_intersection.bind(
+            on_press=lambda a: widget.selected_obj.count_intersection_with_all(
+                widget
+            )
+        )
+
+        remove_point_btn = Button(text='Remove active point')
+        remove_point_btn.bind(
+            on_press=lambda a: widget.selected_obj.delete_active_point(widget)
+        )
 
         object_settings_box.add_widget(add_point_btn)
         object_settings_box.add_widget(change_active_point)
         object_settings_box.add_widget(fill_polygon)
+        object_settings_box.add_widget(find_intersection)
+        object_settings_box.add_widget(remove_point_btn)
+

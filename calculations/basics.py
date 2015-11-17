@@ -15,6 +15,22 @@ def direction(x):
         return sign(x)
 
 
+def is_between(a, b, c):
+    crossproduct = (c.y - a.y) * (b.x - a.x) - (c.x - a.x) * (b.y - a.y)
+    if abs(crossproduct) > EPSILON:
+        return False
+
+    dotproduct = (c.x - a.x) * (b.x - a.x) + (c.y - a.y)*(b.y - a.y)
+    if dotproduct < 0:
+        return False
+
+    squaredlengthba = (b.x - a.x)*(b.x - a.x) + (b.y - a.y)*(b.y - a.y)
+    if dotproduct > squaredlengthba:
+        return False
+
+    return True
+
+
 def on_rectangle(p1, p2, q):
     return (
         min(p1.x, p2.x) <= q.x <= max(p1.x, p2.x) and
@@ -90,7 +106,7 @@ class Segment(object):
     @staticmethod
     def intersection(s1, s2):
 
-        result = namedtuple('intersection', ['x', 'y'])
+        # result = namedtuple('intersection', ['x', 'y'])
         A1, B1 = (s1.p2-s1.p1).y, (s1.p1 - s1.p2).x
         A2, B2 = (s2.p2-s2.p1).y, (s2.p1 - s2.p2).x
 
@@ -100,5 +116,6 @@ class Segment(object):
 
         if abs(det) < EPSILON:
             return None
-        return result((B2*C1 - B1*C2)/det, (A1*C2 - A2*C1)/det)
+        # return result((B2*C1 - B1*C2)/det, (A1*C2 - A2*C1)/det)
+        return SimplePoint(x=(B2*C1 - B1*C2)/det, y=(A1*C2 - A2*C1)/det)
 
