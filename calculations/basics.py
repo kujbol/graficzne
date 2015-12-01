@@ -41,8 +41,8 @@ def on_rectangle(p1, p2, q):
 class SimplePoint(object):
     def __init__(self, x=None, y=None, point=None):
         if point:
-            self.x = point.x
-            self.y = point.y
+            self.x = float(point.x)
+            self.y = float(point.y)
         else:
             self.x = x
             self.y = y

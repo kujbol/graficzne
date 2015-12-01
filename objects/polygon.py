@@ -1,23 +1,29 @@
 from itertools import chain
+from PIL import Image
+
 from calculations.basics import Segment
 from draw.line import draw_line, draw_line_anty_aliasing
 from draw.polygon import (
     clean_polygon_inside, re_draw_polygon_inside, create_list
 )
-
 from objects.basics import Settings, BasicPointClass
 from objects.point import Point
-
+from textures.octree import cut_pallet
 
 class Polygon(BasicPointClass):
-    def __init__(self, x, y, widget):
+    def __init__(self, x, y, widget, polygon_point_list=None):
         self.widget = widget
         self.token_inside = None
         self.settings = Settings()
-        self.points = [
-            Point(x, y, self), Point(x + 30, y + 30, self),
-            Point(x + 30, y - 30, self),
-        ]
+        if polygon_point_list:
+            self.points = []
+            for point in polygon_point_list:
+                self.points.append(Point(point.x, point.y, self))
+        else:
+            self.points = [
+                Point(x, y, self), Point(x + 30, y + 30, self),
+                Point(x + 30, y - 30, self),
+            ]
 
         self.widget.selected_point = self.points[0]
 
@@ -47,6 +53,23 @@ class Polygon(BasicPointClass):
                 thickness=self.settings.thickness
             )
 
+    def draw_texture(self, widget):
+        clean_polygon_inside(self)
+
+        max_x = max(point.x for point in self.points)
+        max_y = max(point.y for point in self.points)
+        min_x = min(point.x for point in self.points)
+        min_y = min(point.y for point in self.points)
+
+        im = Image.open('files/textura2.jpg')
+        im.load()
+        pallet = cut_pallet(im, 8)
+        im.putpalette(pallet)
+        im.resize((max_x - min_x, max_y - min_y))
+
+        rgb_im = im.convert('RGB')
+        re_draw_polygon_inside(self, texture=rgb_im, min_x=min_x, min_y=min_y)
+
     def add_point(self, x, y, widget):
         clean_polygon_inside(self)
         point = Point(x, y, self)
@@ -67,15 +90,13 @@ class Polygon(BasicPointClass):
             self.draw()
 
     def change_fill(self, widget):
-        if self.token_inside:
-            clean_polygon_inside(self)
-        else:
-            re_draw_polygon_inside(self)
+        re_draw_polygon_inside(self)
 
     def count_intersection_with_all(self, widget):
         for obj in widget.object_set:
             if isinstance(obj, Polygon):
                 self.find_intersection_with_polygon(obj)
+                return
 
     def delete_active_point(self, widget):
         if len(self.points) == 1:
@@ -108,13 +129,17 @@ class Polygon(BasicPointClass):
         for self_segment in self_segments:
             for subject_segment in subject_segments:
                 if (
-                    Segment.is_intersection(self_segment, subject_segment) and
+                    Segment.is_intersection(self_segment, subject_segment)
+                    is True and
                     Segment.intersection(self_segment, subject_segment)
                     is not None
                 ):
                     intersection_points.append(
                         Segment.intersection(subject_segment, self_segment)
                     )
+        # for point in intersection_points:
+        #     Point(point.x, point.y, self)
+        print len(intersection_points)
 
         subject_points = create_list(intersection_points, subject_segments)
         self_points = create_list(intersection_points, self_segments)
@@ -133,21 +158,17 @@ class Polygon(BasicPointClass):
 
         start_point = into_self_windows[0]
         actual_index = subject_points.index(start_point)
-        actual_index += 1
+        actual_index = (actual_index + 1) % len(subject_points)
         actual_point = subject_points[actual_index]
         output_point_list = [start_point]
 
-        actual_poly = subject_points
+        actual_poly = self_points
 
         def not_actual_poly(actual_poly):
             if actual_poly == subject_points:
                 return self_points
             else:
                 return subject_points
-
-        for point1, point2 in zip(subject_points, subject_points[1:]):
-            self._draw_line(point1, point2)
-        self._draw_line(subject_points[-1], subject_points[0])
 
         while actual_point != start_point:
             if visited[actual_point]:
@@ -162,3 +183,13 @@ class Polygon(BasicPointClass):
             else:
                 actual_index = (actual_index + 1) % len(actual_poly)
                 actual_point = actual_poly[actual_index]
+
+        output_poly = Polygon(
+            None, None, self.widget, polygon_point_list=output_point_list
+        )
+        self.widget.selected_obj = output_poly
+        self.widget.object_set.add(output_poly)
+
+        # for point1, point2 in zip(output_point_list, output_point_list[1:]):
+        #     self._draw_line(point1, point2)
+        # self._draw_line(output_point_list[-1], output_point_list[0])

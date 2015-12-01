@@ -2,9 +2,10 @@ from kivy.graphics.context_instructions import Color
 
 
 class Settings(object):
-    color = Color(1, 1, 1)
-    thickness = 1
-    anty_aliasing = False
+    def __init__(self):
+        self.color = Color(1, 1, 1)
+        self.thickness = 1
+        self.anty_aliasing = False
 
 
 class BasicPointClass(object):

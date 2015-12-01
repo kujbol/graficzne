@@ -4,7 +4,7 @@ from kivy.graphics.context_instructions import Color
 from kivy.graphics.instructions import InstructionGroup
 
 
-def put_pixel(x, y, color, canvas, token, alpha=None, thickness=1):
+def put_pixel(x, y, color, canvas, token, alpha=None, thickness=2):
     r, g, b = color.r, color.g, color.b
     c = Color(r, g, b)
     if alpha:

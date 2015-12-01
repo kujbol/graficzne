@@ -22,18 +22,18 @@ class PolygonSettingsWidget(BasicSettingWidgetClass):
             )
         )
 
-        change_active_point = Button(text='Change active point')
-        change_active_point.bind(
+        change_active_point_btn = Button(text='Change active point')
+        change_active_point_btn.bind(
             on_press=lambda a: widget.selected_obj.move_active_point(widget)
         )
 
-        fill_polygon = Button(text='Fill polygon')
-        fill_polygon.bind(
+        fill_polygon_btn = Button(text='Fill polygon')
+        fill_polygon_btn.bind(
             on_press=lambda a: widget.selected_obj.change_fill(widget)
         )
 
-        find_intersection = Button(text='Find intersection')
-        find_intersection.bind(
+        find_intersection_btn = Button(text='Find intersection')
+        find_intersection_btn.bind(
             on_press=lambda a: widget.selected_obj.count_intersection_with_all(
                 widget
             )
@@ -44,9 +44,13 @@ class PolygonSettingsWidget(BasicSettingWidgetClass):
             on_press=lambda a: widget.selected_obj.delete_active_point(widget)
         )
 
+        draw_texture_btn = Button(text='Fill texture')
+        draw_texture_btn.bind(
+            on_press=lambda a: widget.selected_obj.draw_texture(widget)
+        )
         object_settings_box.add_widget(add_point_btn)
-        object_settings_box.add_widget(change_active_point)
-        object_settings_box.add_widget(fill_polygon)
-        object_settings_box.add_widget(find_intersection)
+        object_settings_box.add_widget(change_active_point_btn)
+        object_settings_box.add_widget(fill_polygon_btn)
+        object_settings_box.add_widget(find_intersection_btn)
         object_settings_box.add_widget(remove_point_btn)
-
+        object_settings_box.add_widget(draw_texture_btn)

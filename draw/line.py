@@ -3,6 +3,7 @@ from draw.basics import put_pixel, sign, rfpart, fpart
 
 def draw_line(x1, y1, x2, y2, color, obj=None, canvas=None, thickness=1):
 
+    x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
     canvas = canvas or obj.widget.canvas
     token = str(hash(obj))
 
