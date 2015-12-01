@@ -10,6 +10,7 @@ def cut_pallet(image, colors_left):
     tree.delete_nodes(colors_left)
     pallet = []
     tree.build_pallet(pallet)
+    print len(pallet)
     return pallet
 
 

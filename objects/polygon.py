@@ -62,10 +62,10 @@ class Polygon(BasicPointClass):
         min_x = min(point.x for point in self.points)
         min_y = min(point.y for point in self.points)
 
-        im = Image.open('files/textura3.jpg')
+        im = Image.open('files/colors.jpg')
         im.load()
 
-        pallet = cut_pallet(im, 256)
+        pallet = cut_pallet(im, 20)
         array = list(im.getdata())
         new_array = [
             closest_color_from_pallet(pallet, color)
@@ -73,6 +73,7 @@ class Polygon(BasicPointClass):
         ]
         im = Image.new(im.mode, im.size)
         im.putdata(new_array)
+        im = im.rotate(180)
 
         resided = im.resize((max_x - min_x, max_y - min_y))
 
