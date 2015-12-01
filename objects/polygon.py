@@ -62,10 +62,10 @@ class Polygon(BasicPointClass):
         min_x = min(point.x for point in self.points)
         min_y = min(point.y for point in self.points)
 
-        im = Image.open('files/textura2.jpg')
+        im = Image.open('files/textura3.jpg')
         im.load()
 
-        pallet = cut_pallet(im, 8)
+        pallet = cut_pallet(im, 256)
         array = list(im.getdata())
         new_array = [
             closest_color_from_pallet(pallet, color)

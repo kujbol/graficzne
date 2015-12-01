@@ -25,10 +25,11 @@ color_tuple = namedtuple('color', ['red', 'green', 'blue'])
 
 def closest_color_from_pallet(pallet, array_color):
     color = color_tuple(array_color[0], array_color[1], array_color[2])
-    return min(
+    new_color = min(
         (color_pallet for color_pallet in pallet),
         key=lambda x: color_length(x, color)
     )
+    return new_color.red, new_color.green, new_color.blue
 
 
 def color_length(color1, color2):
