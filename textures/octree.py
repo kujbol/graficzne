@@ -1,3 +1,5 @@
+from math import sqrt
+from collections import namedtuple
 from PIL import Image
 
 
@@ -17,6 +19,24 @@ def get_bit(number, bit_number):
         return 1
     else:
         return 0
+
+color_tuple = namedtuple('color', ['red', 'green', 'blue'])
+
+
+def closest_color_from_pallet(pallet, array_color):
+    color = color_tuple(array_color[0], array_color[1], array_color[2])
+    return min(
+        (color_pallet for color_pallet in pallet),
+        key=lambda x: color_length(x, color)
+    )
+
+
+def color_length(color1, color2):
+    return sqrt(
+        (color1.red - color2.red) * (color1.red - color2.red) +
+        (color1.green - color2.green) * (color1.green - color2.green) +
+        (color1.blue - color2.blue) * (color1.blue - color2.blue)
+    )
 
 
 class OctTree(object):
@@ -42,15 +62,22 @@ class OctTree(object):
     def delete_nodes(self, color_left):
         while self.color_count >= color_left:
             node = self._find_minimum_leaf()
-
+            counter = 0
+            for child in node.parent.children:
+                if child is not None:
+                    counter += 1
+            if counter >= 2:
+                self.color_count -= 1
             self._delete_leaf(node)
-            self.color_count -= 1
+
 
     def build_pallet(self, pallet, actual_node=None):
         if actual_node is None:
             actual_node = self.root
         if actual_node.children is not None and max(actual_node.children) is None:
-            pallet.extend([actual_node.red, actual_node.green, actual_node.blue])
+            pallet.append(
+                color_tuple(actual_node.red, actual_node.green, actual_node.blue)
+            )
             return
         for node in actual_node.children:
             if node is not None:

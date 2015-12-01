@@ -31,7 +31,7 @@ def re_draw_polygon_inside(polygon, texture=None, min_x=None, min_y=None):
         if intersections:
             for i1, i2 in zip(intersections[::2], intersections[1::2]):
                 if texture:
-                    for j in range(i2.x, i1.x):
+                    for j in range(int(i2.x), int(i1.x)):
                         r, g, b = texture.getpixel((j - min_x, i - min_y))
                         color = Color(float(r)/255, float(g)/255, float(b)/255)
                         put_pixel(
@@ -39,7 +39,7 @@ def re_draw_polygon_inside(polygon, texture=None, min_x=None, min_y=None):
                         )
                 else:
                     draw_line(
-                        i1.x, i, i2.x, i, color, obj=token_obj, canvas=canvas
+                        int(i1.x), i, int(i2.x), i, color, obj=token_obj, canvas=canvas
                     )
 
 

@@ -8,7 +8,8 @@ from draw.polygon import (
 )
 from objects.basics import Settings, BasicPointClass
 from objects.point import Point
-from textures.octree import cut_pallet
+from textures.octree import cut_pallet, closest_color_from_pallet
+
 
 class Polygon(BasicPointClass):
     def __init__(self, x, y, widget, polygon_point_list=None):
@@ -63,11 +64,19 @@ class Polygon(BasicPointClass):
 
         im = Image.open('files/textura2.jpg')
         im.load()
-        pallet = cut_pallet(im, 8)
-        im.putpalette(pallet)
-        im.resize((max_x - min_x, max_y - min_y))
 
-        rgb_im = im.convert('RGB')
+        pallet = cut_pallet(im, 8)
+        array = list(im.getdata())
+        new_array = [
+            closest_color_from_pallet(pallet, color)
+            for color in array
+        ]
+        im = Image.new(im.mode, im.size)
+        im.putdata(new_array)
+
+        resided = im.resize((max_x - min_x, max_y - min_y))
+
+        rgb_im = resided.convert('RGB')
         re_draw_polygon_inside(self, texture=rgb_im, min_x=min_x, min_y=min_y)
 
     def add_point(self, x, y, widget):
