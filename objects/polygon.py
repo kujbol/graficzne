@@ -9,13 +9,14 @@ from draw.polygon import (
 from objects.basics import Settings, BasicPointClass
 from objects.point import Point
 from textures.octree import cut_pallet, closest_color_from_pallet
+from textures.popular_pallet import popular_pallet
 
 
 class Polygon(BasicPointClass):
     def __init__(self, x, y, widget, polygon_point_list=None):
         self.widget = widget
         self.token_inside = None
-        self.settings = Settings()
+        self.settings = SettingsPolygon()
         if polygon_point_list:
             self.points = []
             for point in polygon_point_list:
@@ -62,10 +63,13 @@ class Polygon(BasicPointClass):
         min_x = min(point.x for point in self.points)
         min_y = min(point.y for point in self.points)
 
-        im = Image.open('files/colors.jpg')
+        im = Image.open('files/3.png')
         im.load()
 
-        pallet = cut_pallet(im, 20)
+        if self.settings.popular_model:
+            pallet = popular_pallet(im, self.settings.color_count+1)
+        else:
+            pallet = cut_pallet(im, self.settings.color_count)
         array = list(im.getdata())
         new_array = [
             closest_color_from_pallet(pallet, color)
@@ -101,6 +105,15 @@ class Polygon(BasicPointClass):
 
     def change_fill(self, widget):
         re_draw_polygon_inside(self)
+
+    def set_color_count(self, data):
+        try:
+            self.settings.color_count = int(data)
+        except ValueError:
+            pass
+
+    def set_model(self, data):
+        self.settings.popular_model = data
 
     def count_intersection_with_all(self, widget):
         for obj in widget.object_set:
@@ -203,3 +216,11 @@ class Polygon(BasicPointClass):
         # for point1, point2 in zip(output_point_list, output_point_list[1:]):
         #     self._draw_line(point1, point2)
         # self._draw_line(output_point_list[-1], output_point_list[0])
+
+
+class SettingsPolygon(Settings):
+    def __init__(self):
+        super(SettingsPolygon, self).__init__()
+        self.color_count = 64
+        self.popular_model = False
+

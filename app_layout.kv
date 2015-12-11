@@ -17,14 +17,14 @@ MyPaintWidget:
         BoxLayout:
             id: object_settings
             orientation: 'vertical'
-            size_hint: (1, .5)
+            size_hint: (1, .65)
             Label:
                 text: 'Thickness of object:'
                 size_hint_y: .1
             TextInput:
                 id: thickness_textbox
                 multiline: 'false'
-                size_hint_y: .2
+                size_hint_y: .1
                 on_text: root.on_update_settings(thickness_textbox, typ='thickness')
             Label:
                 text: 'Color (R, G, B, A)'
@@ -32,14 +32,14 @@ MyPaintWidget:
             TextInput:
                 id: color_textbox
                 multiline: 'false'
-                size_hint_y: .2
+                size_hint_y: .1
                 on_text: root.on_update_settings(color_textbox, typ='color')
             Label:
                 text: 'Anty Aliasing'
                 size_hint_y: .1
             CheckBox:
                 id: anty_aliasing_checkbox
-                size_hint_y: .2
+                size_hint_y: .1
                 on_press: root.on_update_settings(anty_aliasing_checkbox)
             BoxLayout:
                 id: additional_settings
@@ -48,7 +48,7 @@ MyPaintWidget:
         BoxLayout:
             id: new_objects
             orientation: 'vertical'
-            size_hint: (1, .5)
+            size_hint: (1, .35)
             Label:
                 text: 'Available actions'
                 size_hint_y: .2

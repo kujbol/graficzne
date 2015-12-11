@@ -1,6 +1,7 @@
 from kivy.uix.button import Button
 from kivy.uix.checkbox import CheckBox
 from kivy.uix.label import Label
+from kivy.uix.textinput import TextInput
 
 from uix.basics import BasicSettingWidgetClass
 from objects.polygon import Polygon
@@ -48,9 +49,26 @@ class PolygonSettingsWidget(BasicSettingWidgetClass):
         draw_texture_btn.bind(
             on_press=lambda a: widget.selected_obj.draw_texture(widget)
         )
+
+        color_count = TextInput(text='Color count')
+        color_count.bind(
+            text=lambda instance, value: widget.selected_obj.set_color_count(
+                value
+            )
+        )
+
+        popular_model = CheckBox()
+        popular_model.bind(
+            active=lambda instance, value: widget.selected_obj.set_model(
+                value
+            )
+        )
+
         object_settings_box.add_widget(add_point_btn)
         object_settings_box.add_widget(change_active_point_btn)
         object_settings_box.add_widget(fill_polygon_btn)
-        object_settings_box.add_widget(find_intersection_btn)
+        # object_settings_box.add_widget(find_intersection_btn)
         object_settings_box.add_widget(remove_point_btn)
         object_settings_box.add_widget(draw_texture_btn)
+        object_settings_box.add_widget(color_count)
+        object_settings_box.add_widget(popular_model)

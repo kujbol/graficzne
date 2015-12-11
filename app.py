@@ -45,8 +45,9 @@ class MyPaintWidget(BoxLayout):
 
     def on_touch_move(self, touch):
         x, y = int(touch.x), int(touch.y)
-        for point in self.point_set:
-            point.on_touch_move(x, y)
+        if x > self.children[0].x:
+            for point in self.point_set:
+                point.on_touch_move(x, y)
 
     def on_touch_up(self, touch):
         x, y = int(touch.x), int(touch.y)
