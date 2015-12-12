@@ -2,14 +2,17 @@ from kivy.graphics.context_instructions import Color
 from calculations.basics import SimplePoint, Segment, is_between
 from draw.basics import put_pixel
 from draw.line import draw_line
+from textures.phong_model import get_light_phong
 
 
-def re_draw_polygon_inside(polygon, texture=None, min_x=None, min_y=None):
+def re_draw_polygon_inside(
+        polygon, texture=None, lights=None, viewer=None, min_x=None, min_y=None
+):
     clean_polygon_inside(polygon)
     polygon.token_inside = object()
 
     token_obj = polygon.token_inside
-    color = Color(0, 1, 0)
+    color = Color(0, 0, 0)
     canvas = polygon.widget.canvas
 
     segments = [
@@ -34,6 +37,16 @@ def re_draw_polygon_inside(polygon, texture=None, min_x=None, min_y=None):
                     for j in range(int(i2.x), int(i1.x)):
                         r, g, b = texture.getpixel((j - min_x, i - min_y))
                         color = Color(float(r)/255, float(g)/255, float(b)/255)
+                        put_pixel(
+                            j, i, color, canvas, str(hash(token_obj))
+                        )
+                elif lights and viewer:
+                    for j in range(int(i2.x), int(i1.x)):
+                        color = Color(
+                            get_light_phong(j, i, viewer, lights),
+                            get_light_phong(j, i, viewer, lights),
+                            get_light_phong(j, i, viewer, lights)
+                        )
                         put_pixel(
                             j, i, color, canvas, str(hash(token_obj))
                         )

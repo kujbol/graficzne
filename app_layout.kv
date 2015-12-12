@@ -2,13 +2,20 @@
 #: import MyLine objects.line.Line
 #: import MyEllipse objects.ellipse.Ellipse
 #: import Circle objects.circle.Circle
+#: import Light objects.light.Light
+#: import Viewer objects.viewer.Viewer
 
 MyPaintWidget:
     id: 'painting_area'
     orientation: 'horizontal'
     object_settings_box:object_settings
     additional_settings_box:additional_settings
-
+    canvas:
+        Color:
+            rgb: (1, 1, 1)
+        Rectangle:
+            size: self.size
+            pos: self.pos
     BoxLayout:
         id: buttons_layout
         orientation: 'vertical'
@@ -17,17 +24,10 @@ MyPaintWidget:
         BoxLayout:
             id: object_settings
             orientation: 'vertical'
-            size_hint: (1, .65)
+            size_hint: (1, .60)
             Label:
-                text: 'Thickness of object:'
-                size_hint_y: .1
-            TextInput:
-                id: thickness_textbox
-                multiline: 'false'
-                size_hint_y: .1
-                on_text: root.on_update_settings(thickness_textbox, typ='thickness')
-            Label:
-                text: 'Color (R, G, B, A)'
+                text: '[color=000000]Color (R, G, B, A)[/color]'
+                markup: True
                 size_hint_y: .1
             TextInput:
                 id: color_textbox
@@ -35,11 +35,12 @@ MyPaintWidget:
                 size_hint_y: .1
                 on_text: root.on_update_settings(color_textbox, typ='color')
             Label:
-                text: 'Anty Aliasing'
-                size_hint_y: .1
+                text: '[color=000000]Anty Aliasing[/color]'
+                markup: True
+                size_hint_y: .08
             CheckBox:
                 id: anty_aliasing_checkbox
-                size_hint_y: .1
+                size_hint_y: .05
                 on_press: root.on_update_settings(anty_aliasing_checkbox)
             BoxLayout:
                 id: additional_settings
@@ -48,10 +49,11 @@ MyPaintWidget:
         BoxLayout:
             id: new_objects
             orientation: 'vertical'
-            size_hint: (1, .35)
+            size_hint: (1, .40)
             Label:
-                text: 'Available actions'
-                size_hint_y: .2
+                text: '[color=000000]Available actions[/color]'
+                markup: True
+                size_hint_y: .3
             Button:
                 id: 'line'
                 text: 'Line'
@@ -68,6 +70,14 @@ MyPaintWidget:
                 id: 'polygon'
                 text: 'Polygon'
                 on_press: root.on_press_button(Polygon)
+            Button:
+                id: 'light'
+                text: 'Light'
+                on_press: root.on_press_button(Light)
+            Button:
+                id: 'viewer'
+                text: 'Viewer'
+                on_press: root.on_press_button(Viewer)
             Button:
                 id: 'remove'
                 text: 'Remove'

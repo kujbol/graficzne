@@ -1,17 +1,19 @@
 from math import sqrt
-from kivy.graphics import Ellipse
+from kivy.graphics import Rectangle
 from kivy.graphics.context_instructions import Color
 from kivy.graphics.instructions import InstructionGroup
+import time
 
 
 def put_pixel(x, y, color, canvas, token, alpha=None, thickness=2):
+
     r, g, b = color.r, color.g, color.b
     c = Color(r, g, b)
     if alpha:
         c.a = alpha
     group = InstructionGroup(group=token)
     group.add(c)
-    group.add(Ellipse(pos=(x, y), size=(thickness, thickness)))
+    group.add(Rectangle(pos=(x, y), size=(thickness, thickness)))
 
     canvas.add(group)
 

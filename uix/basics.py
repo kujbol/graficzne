@@ -36,9 +36,6 @@ def load_settings(widget, obj):
     anty_aliasing_check = get_widget_by_name(widget, 'anty_aliasing_checkbox')
     anty_aliasing_check.active = obj.settings.anty_aliasing
 
-    thickness_edit = get_widget_by_name(widget, 'thickness_textbox')
-    thickness_edit.text = str(obj.settings.thickness)
-
     widget.saved_color = widget.selected_obj.settings.color
     widget.selected_obj.settings.color = Color(.9, 0, .1)
 

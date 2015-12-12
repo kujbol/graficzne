@@ -3,7 +3,7 @@ from kivy.graphics.context_instructions import Color
 
 class Settings(object):
     def __init__(self):
-        self.color = Color(1, 1, 1)
+        self.color = Color(0, 0, 0)
         self.thickness = 1
         self.anty_aliasing = False
 
@@ -18,4 +18,3 @@ class BasicPointClass(object):
         for point in self.points:
             point.delete()
         self.widget.canvas.remove_group(str(hash(self)))
-

@@ -7,9 +7,10 @@ from draw.polygon import (
     clean_polygon_inside, re_draw_polygon_inside, create_list
 )
 from objects.basics import Settings, BasicPointClass
+from objects.light import Light
 from objects.point import Point
+from objects.viewer import Viewer
 from textures.octree import cut_pallet, closest_color_from_pallet
-from textures.popular_pallet import popular_pallet
 
 
 class Polygon(BasicPointClass):
@@ -33,7 +34,6 @@ class Polygon(BasicPointClass):
 
     def draw(self):
         self.widget.canvas.remove_group(str(hash(self)))
-        clean_polygon_inside(self)
 
         p2 = self.points[-1]
         for point in self.points:
@@ -66,23 +66,37 @@ class Polygon(BasicPointClass):
         im = Image.open('files/3.png')
         im.load()
 
-        if self.settings.popular_model:
-            pallet = popular_pallet(im, self.settings.color_count+1)
-        else:
+        if self.settings.cut_colors:
             pallet = cut_pallet(im, self.settings.color_count)
-        array = list(im.getdata())
-        new_array = [
-            closest_color_from_pallet(pallet, color)
-            for color in array
-        ]
-        im = Image.new(im.mode, im.size)
-        im.putdata(new_array)
+            array = list(im.getdata())
+            new_array = [
+                closest_color_from_pallet(pallet, color)
+                for color in array
+            ]
+            im = Image.new(im.mode, im.size)
+            im.putdata(new_array)
         im = im.rotate(180)
 
         resided = im.resize((max_x - min_x, max_y - min_y))
 
         rgb_im = resided.convert('RGB')
-        re_draw_polygon_inside(self, texture=rgb_im, min_x=min_x, min_y=min_y)
+        if self.settings.shadows:
+            lights = [
+                obj for obj in self.widget.object_set if isinstance(obj, Light)
+            ]
+            viewer = [
+                obj for obj in self.widget.object_set
+                if isinstance(obj, Viewer) and not isinstance(obj, Light)
+            ]
+            if len(viewer) == 1:
+                re_draw_polygon_inside(
+                    self, min_x=min_x, min_y=min_y, viewer=viewer[0],
+                    lights=lights
+                )
+        else:
+            re_draw_polygon_inside(
+                self, texture=rgb_im, min_x=min_x, min_y=min_y
+            )
 
     def add_point(self, x, y, widget):
         clean_polygon_inside(self)
@@ -106,20 +120,23 @@ class Polygon(BasicPointClass):
     def change_fill(self, widget):
         re_draw_polygon_inside(self)
 
-    def set_color_count(self, data):
+    def set_color_count(self, value):
         try:
-            self.settings.color_count = int(data)
+            self.settings.color_count = int(value)
         except ValueError:
             pass
 
-    def set_model(self, data):
-        self.settings.popular_model = data
+    def set_color_cut(self, value):
+        self.settings.cut_colors = value
 
     def count_intersection_with_all(self, widget):
         for obj in widget.object_set:
             if isinstance(obj, Polygon):
                 self.find_intersection_with_polygon(obj)
                 return
+
+    def set_shadows(self, value):
+        self.settings.shadows = value
 
     def delete_active_point(self, widget):
         if len(self.points) == 1:
@@ -213,14 +230,12 @@ class Polygon(BasicPointClass):
         self.widget.selected_obj = output_poly
         self.widget.object_set.add(output_poly)
 
-        # for point1, point2 in zip(output_point_list, output_point_list[1:]):
-        #     self._draw_line(point1, point2)
-        # self._draw_line(output_point_list[-1], output_point_list[0])
-
 
 class SettingsPolygon(Settings):
     def __init__(self):
         super(SettingsPolygon, self).__init__()
-        self.color_count = 64
-        self.popular_model = False
+        self.cut_colors = False
+        self.color_count = 128
+        self.shadows = False
+
 

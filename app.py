@@ -2,17 +2,16 @@ from kivy.app import App
 from kivy.lang import Builder
 from kivy.properties import ObjectProperty
 from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.button import Button
 from kivy.uix.checkbox import CheckBox
-from kivy.uix.colorpicker import ColorPicker
-from kivy.uix.textinput import TextInput
-from kivy.uix.widget import Widget
 from kivy.graphics import Color
 
 from objects.line import Line
 
-from uix.polygon_settings import *
 from uix.basics import load_settings, BasicSettings
+from uix.polygon_settings import PolygonSettingsWidget
+from uix.viewer_settings import ViewerSettingsWidget
+
+
 
 
 class MyPaintWidget(BoxLayout):
@@ -27,7 +26,7 @@ class MyPaintWidget(BoxLayout):
     object_settings_box = ObjectProperty()
     additional_settings_box = ObjectProperty()
 
-    settings_widgets = [PolygonSettingsWidget()]
+    settings_widgets = [PolygonSettingsWidget(), ViewerSettingsWidget()]
 
     saved_color = None
 
@@ -105,4 +104,5 @@ class MyPaintApp(App):
         return Builder.load_file("app_layout.kv")
 
 if __name__ == '__main__':
-    MyPaintApp().run()
+    app = MyPaintApp()
+    app.run()

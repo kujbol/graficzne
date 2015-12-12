@@ -1,3 +1,5 @@
+from kivy.graphics.instructions import InstructionGroup
+from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.checkbox import CheckBox
 from kivy.uix.label import Label
@@ -57,12 +59,33 @@ class PolygonSettingsWidget(BasicSettingWidgetClass):
             )
         )
 
-        popular_model = CheckBox()
-        popular_model.bind(
-            active=lambda instance, value: widget.selected_obj.set_model(
+        cut_colors = CheckBox(value=widget.selected_obj.settings.shadows)
+        cut_colors.bind(
+            active=lambda instance, value: widget.selected_obj.set_color_cut(
                 value
             )
         )
+
+        label_cut_colors = Label(
+            text='[color=000000]Cut colors[/color]', markup=True
+        )
+        box_cut_color = BoxLayout(orientation='horizontal')
+        box_cut_color.add_widget(label_cut_colors)
+        box_cut_color.add_widget(cut_colors)
+
+        shadows = CheckBox()
+        shadows.bind(
+            active=lambda instance, value: widget.selected_obj.set_shadows(
+                value
+            )
+        )
+        shadows_label = Label(
+            text='[color=000000]Shadows[/color]', markup=True
+        )
+        box_shadows = BoxLayout(orientation='horizontal')
+        box_shadows.add_widget(shadows_label)
+        box_shadows.add_widget(shadows)
+
 
         object_settings_box.add_widget(add_point_btn)
         object_settings_box.add_widget(change_active_point_btn)
@@ -70,5 +93,6 @@ class PolygonSettingsWidget(BasicSettingWidgetClass):
         # object_settings_box.add_widget(find_intersection_btn)
         object_settings_box.add_widget(remove_point_btn)
         object_settings_box.add_widget(draw_texture_btn)
-        object_settings_box.add_widget(color_count)
-        object_settings_box.add_widget(popular_model)
+        # object_settings_box.add_widget(box_cut_color)
+        object_settings_box.add_widget(box_shadows)
+

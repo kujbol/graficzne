@@ -1,13 +1,16 @@
 from kivy.uix.widget import Widget
 from draw.point import draw_point, POINT_SIZE
+from draw.polygon import clean_polygon_inside
 
 
 class Point(object):
-    def __init__(self, x, y, obj):
+    def __init__(self, x, y, obj, size=None, texture=None):
         self.x = x
         self.y = y
         self.obj = obj
         self.obj.widget.point_set.add(self)
+        self.size = size or POINT_SIZE
+        self.texture = texture
 
         draw_point(self)
 
@@ -15,16 +18,26 @@ class Point(object):
         self.x = x
         self.y = y
         draw_point(self)
+
+        # TODO fix this shit
+        if getattr(self.obj, 'token_inside', None):
+            clean_polygon_inside(self.obj)
+
         self.obj.draw()
 
     def delete(self):
+
+        # TODO fix this shit
+        if getattr(self.obj, 'token_inside', None):
+            clean_polygon_inside(self.obj)
+
         self.obj.widget.point_set.remove(self)
         self.obj.widget.canvas.remove_group(str(hash(self)))
 
     def is_touched(self, x, y):
         return (
-            abs(x - self.x) < POINT_SIZE and
-            abs(y - self.y) < POINT_SIZE
+            abs(x - self.x) < self.size and
+            abs(y - self.y) < self.size
         )
 
     def on_touch_down(self, x, y):
