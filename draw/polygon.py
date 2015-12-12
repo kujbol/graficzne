@@ -1,12 +1,14 @@
 from kivy.graphics.context_instructions import Color
 from calculations.basics import SimplePoint, Segment, is_between
+from calculations.vec3d import Vec3d
 from draw.basics import put_pixel
 from draw.line import draw_line
 from textures.phong_model import get_light_phong
 
 
 def re_draw_polygon_inside(
-        polygon, texture=None, lights=None, viewer=None, min_x=None, min_y=None
+        polygon, texture=None, lights=None, viewer=None, min_x=None, min_y=None,
+        bump_map=None
 ):
     clean_polygon_inside(polygon)
     polygon.token_inside = object()
@@ -33,7 +35,26 @@ def re_draw_polygon_inside(
         intersections.sort(key=lambda point: point.x, reverse=True)
         if intersections:
             for i1, i2 in zip(intersections[::2], intersections[1::2]):
-                if texture:
+                if texture and lights and viewer:
+                    for j in range(int(i2.x), int(i1.x)):
+                        r, g, b = texture.getpixel((j - min_x, i - min_y))
+                        if bump_map:
+                            r1, g1, b1 = bump_map.getpixel((j - min_x, i - min_y))
+                            norm = Vec3d(r1/128.0 - 1, g1/128.0 - 1, b1/128.0 - 1)
+                        else:
+                            norm = None
+                        color = Color(
+                            float(r)/255 *
+                            get_light_phong(j, i, viewer, lights, norm=norm),
+                            float(g)/255 *
+                            get_light_phong(j, i, viewer, lights, norm=norm),
+                            float(b)/255 *
+                            get_light_phong(j, i, viewer, lights, norm=norm)
+                        )
+                        put_pixel(
+                            j, i, color, canvas, str(hash(token_obj))
+                        )
+                elif texture:
                     for j in range(int(i2.x), int(i1.x)):
                         r, g, b = texture.getpixel((j - min_x, i - min_y))
                         color = Color(float(r)/255, float(g)/255, float(b)/255)

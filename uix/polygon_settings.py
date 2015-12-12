@@ -1,4 +1,3 @@
-from kivy.graphics.instructions import InstructionGroup
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.checkbox import CheckBox
@@ -59,7 +58,7 @@ class PolygonSettingsWidget(BasicSettingWidgetClass):
             )
         )
 
-        cut_colors = CheckBox(value=widget.selected_obj.settings.shadows)
+        cut_colors = CheckBox(active=widget.selected_obj.settings.cut_colors)
         cut_colors.bind(
             active=lambda instance, value: widget.selected_obj.set_color_cut(
                 value
@@ -73,7 +72,7 @@ class PolygonSettingsWidget(BasicSettingWidgetClass):
         box_cut_color.add_widget(label_cut_colors)
         box_cut_color.add_widget(cut_colors)
 
-        shadows = CheckBox()
+        shadows = CheckBox(active=widget.selected_obj.settings.shadows)
         shadows.bind(
             active=lambda instance, value: widget.selected_obj.set_shadows(
                 value
@@ -86,6 +85,18 @@ class PolygonSettingsWidget(BasicSettingWidgetClass):
         box_shadows.add_widget(shadows_label)
         box_shadows.add_widget(shadows)
 
+        bump_mapping = CheckBox(active=widget.selected_obj.settings.bump_mapping)
+        bump_mapping.bind(
+            active=lambda instance, value: widget.selected_obj.set_bump_mapping(
+                value
+            )
+        )
+        bump_mapping_label = Label(
+            text='[color=000000]Bump map[/color]', markup=True
+        )
+        box_bump_mapping = BoxLayout(orientation='horizontal')
+        box_bump_mapping.add_widget(bump_mapping_label)
+        box_bump_mapping.add_widget(bump_mapping)
 
         object_settings_box.add_widget(add_point_btn)
         object_settings_box.add_widget(change_active_point_btn)
@@ -93,6 +104,6 @@ class PolygonSettingsWidget(BasicSettingWidgetClass):
         # object_settings_box.add_widget(find_intersection_btn)
         object_settings_box.add_widget(remove_point_btn)
         object_settings_box.add_widget(draw_texture_btn)
-        # object_settings_box.add_widget(box_cut_color)
+        object_settings_box.add_widget(box_cut_color)
         object_settings_box.add_widget(box_shadows)
-
+        object_settings_box.add_widget(box_bump_mapping)

@@ -2,11 +2,9 @@ from math import sqrt
 from kivy.graphics import Rectangle
 from kivy.graphics.context_instructions import Color
 from kivy.graphics.instructions import InstructionGroup
-import time
 
 
 def put_pixel(x, y, color, canvas, token, alpha=None, thickness=2):
-
     r, g, b = color.r, color.g, color.b
     c = Color(r, g, b)
     if alpha:
@@ -31,6 +29,7 @@ def sign(x):
         return 1
     else:
         return -1
+
 
 def length(x1, y1, x2, y2):
     return sqrt((x1 - x2)*(x1 - x2) + (y1 - y2)*(y1 - y2))

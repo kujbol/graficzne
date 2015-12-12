@@ -63,8 +63,15 @@ class Polygon(BasicPointClass):
         min_x = min(point.x for point in self.points)
         min_y = min(point.y for point in self.points)
 
-        im = Image.open('files/3.png')
+        im = Image.open('files/wall.png')
         im.load()
+
+        if self.settings.bump_mapping:
+            bump_map = Image.open('files/normal_wall.png')
+            bump_map.load()
+            bump_map = bump_map.resize((max_x - min_x, max_y - min_y))
+        else:
+            bump_map = None
 
         if self.settings.cut_colors:
             pallet = cut_pallet(im, self.settings.color_count)
@@ -90,8 +97,8 @@ class Polygon(BasicPointClass):
             ]
             if len(viewer) == 1:
                 re_draw_polygon_inside(
-                    self, min_x=min_x, min_y=min_y, viewer=viewer[0],
-                    lights=lights
+                    self, texture=rgb_im, min_x=min_x, min_y=min_y,
+                    viewer=viewer[0], lights=lights, bump_map=bump_map
                 )
         else:
             re_draw_polygon_inside(
@@ -118,7 +125,21 @@ class Polygon(BasicPointClass):
             self.draw()
 
     def change_fill(self, widget):
-        re_draw_polygon_inside(self)
+        # TODO ugly again, jezus do something
+        if self.settings.shadows:
+            lights = [
+                obj for obj in self.widget.object_set if isinstance(obj, Light)
+            ]
+            viewer = [
+                obj for obj in self.widget.object_set
+                if isinstance(obj, Viewer) and not isinstance(obj, Light)
+            ]
+            if len(viewer) == 1:
+                re_draw_polygon_inside(
+                    self, viewer=viewer[0], lights=lights
+                )
+        else:
+            re_draw_polygon_inside(self)
 
     def set_color_count(self, value):
         try:
@@ -128,6 +149,9 @@ class Polygon(BasicPointClass):
 
     def set_color_cut(self, value):
         self.settings.cut_colors = value
+
+    def set_bump_mapping(self, value):
+        self.settings.bump_mapping = value
 
     def count_intersection_with_all(self, widget):
         for obj in widget.object_set:
@@ -237,5 +261,6 @@ class SettingsPolygon(Settings):
         self.cut_colors = False
         self.color_count = 128
         self.shadows = False
+        self.bump_mapping = False
 
 
